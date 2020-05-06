@@ -1,106 +1,105 @@
 import React, { Component } from 'react';
+
 import './App.css';
+import Persons from '../components/Persons/Persons';
+import Cockpit from '../components/Cockpit/Cockpit';
 
-import styled from 'styled-components';
-
-import Person from '../components/Persons/Person/Person';
-
-const StyledButton = styled.button`
-  background-color: ${props => props.alt ? 'red' : 'green'};
-  color: white;
-  border: 2px solid lightblue;
-  padding: 16px;
-  cursor: pointer;
-  &:hover {
-    background-color: ${props => props.alt ? 'salmon' : 'lightgreen'};
-    color: black;
-  }
-`;
 class App extends Component {
+  constructor(props) {
+    super(props);
+    console.log('[App.js] constructor');
+  }
+
   state = {
     persons: [
-      { id: 'row1', name: 'Ronnie', age: 26 },
-      { id: 'row2', name: 'Namwanza', age: 27 },
-      { id: 'row3', name: 'Madinah', age: 25 }
+      { id: 'asfa1', name: 'Max', age: 28 },
+      { id: 'vasdf1', name: 'Manu', age: 29 },
+      { id: 'asdf11', name: 'Stephanie', age: 26 }
     ],
-    someOtherStates: 'Some other state !',
+    otherState: 'some other value',
     showPersons: false
+  };
+
+  static getDerivedStateFromProps(props, state) {
+    console.log('[App.js] getDerivedStateFromProps', props);
+    return state;
+  }
+
+  // componentWillMount() {
+  //   console.log('[App.js] componentWillMount');
+  // }
+
+  componentDidMount() {
+    console.log('[App.js] componentDidMount');
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('[App.js] shouldComponentUpdate');
+    return true;
+  }
+
+  componentDidUpdate() {
+    console.log('[App.js] componentDidUpdate');
   }
 
   nameChangedHandler = (event, id) => {
     const personIndex = this.state.persons.findIndex(p => {
       return p.id === id;
-    })
+    });
 
     const person = {
       ...this.state.persons[personIndex]
-    }
+    };
+
+    // const person = Object.assign({}, this.state.persons[personIndex]);
 
     person.name = event.target.value;
 
     const persons = [...this.state.persons];
     persons[personIndex] = person;
 
-    this.setState( {persons: persons})
-  }
+    this.setState({ persons: persons });
+  };
 
-  deletePersonHandler = (personIndex) => {
-    const myPerson = [...this.state.persons];
-    myPerson.splice(personIndex, 1);
-    this.setState({persons: myPerson})
-  }
+  deletePersonHandler = personIndex => {
+    // const persons = this.state.persons.slice();
+    const persons = [...this.state.persons];
+    persons.splice(personIndex, 1);
+    this.setState({ persons: persons });
+  };
 
   togglePersonsHandler = () => {
-    const ShowPerson = this.state.showPersons
-    this.setState({showPersons: !ShowPerson})
-  }
+    const doesShow = this.state.showPersons;
+    this.setState({ showPersons: !doesShow });
+  };
 
   render() {
-    let Persons = null;
+    console.log('[App.js] render');
+    let persons = null;
 
-   // changing styles dynamically
-   const classes = [];
-   if ( this.state.persons.length <= 2 ) {
-    classes.push('red');
-   }
-
-   if ( this.state.persons.length <= 1) {
-     classes.push('bold');
-   }
-
-   // end of dynamic styles 
-
-    if ( this.state.showPersons ) {
-      Persons = (
-        <div>
-          {this.state.persons.map((myPerson, index) => {
-            return (
-              <Person 
-                click = {() => this.deletePersonHandler(index)}
-                name = {myPerson.name} 
-                age = {myPerson.age} 
-                key = {myPerson.id} 
-                changed = {(event) => this.nameChangedHandler(event, myPerson.id)}
-              />
-            )
-          },)}
-        </div>
-      )
+    if (this.state.showPersons) {
+      persons = (
+        <Persons
+          persons={this.state.persons}
+          clicked={this.deletePersonHandler}
+          changed={this.nameChangedHandler}
+        />
+      );
     }
 
     return (
       <div className="App">
-        <h1>Hi, this is React App!</h1>
-        <p className={classes.join(' ')}>This is really working !</p>
-        <StyledButton alt={this.state.showPersons}
-          onClick={this.togglePersonsHandler}>
-          Toggle Persons
-        </StyledButton>
-
-        {Persons}
+        <Cockpit
+          title={this.props.appTitle}
+          showPersons={this.state.showPersons}
+          persons={this.state.persons}
+          clicked={this.togglePersonsHandler}
+        />
+        {persons}
       </div>
     );
-    // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'Hi, this is React!'))
+    // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'Does this work now?'));
   }
 }
+
 export default App;
