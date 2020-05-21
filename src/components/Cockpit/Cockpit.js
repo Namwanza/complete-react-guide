@@ -1,8 +1,30 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import './Cockpit.css';
 
-const cockpit = ( props ) => {
+const Cockpit = ( props ) => {
+  //  using useRef
+  const toggleBtnRef = useRef(null);
+
+
+  // using useEffect
+  useEffect( () => {
+    console.log('[Cockpit.js] useEffect');
+    // here you can run http request if you want
+    // setTimeout ( () => {
+    //   alert("saved data into the cloud !")
+    // }, 1000)
+
+    // call toggleBtnRef on click
+    toggleBtnRef.current.click();
+
+   return() => {
+    console.log('[Cockpit.js] I can render some code to the dom')
+  }
+   
+  }, [])
+
+
     const assignedClasses = [];
     let btnClass = '';
     if (props.showPersons) {
@@ -21,10 +43,11 @@ const cockpit = ( props ) => {
             <h1>{props.title}</h1>
             <p className={assignedClasses.join( ' ' )}>This is really working!</p>
             <button
+                ref={toggleBtnRef}
                 className={btnClass}
                 onClick={props.clicked}>Toggle Persons</button>
         </div>
     );
 };
 
-export default cockpit;
+export default Cockpit;
